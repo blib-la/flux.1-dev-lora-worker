@@ -1,19 +1,11 @@
-🐣 Please follow me for new updates https://twitter.com/camenduru <br />
-🔥 Please join our discord server https://discord.gg/k5BwmmvJJU <br />
-🥳 Please join my patreon community https://patreon.com/camenduru <br />
+# flux.1-dev LoRA worker
 
-###  🥪 Tost
-https://tost.ai
+> run flux.1-dev + LoRA on RunPod as serverless endpoint
 
-### 🧬 Code
-https://github.com/black-forest-labs/flux
+This is a fork of [camenduru/flux.1-dev-lora-tost](https://github.com/camenduru/flux.1-dev-lora-tost), I just wanted to simplify it and make sure I understand how it works.
 
-### 🌐 Page
-https://blackforestlabs.ai/
+## Acknowledgements
 
-### 🖼 Output
-![ComfyUI_00854_](https://github.com/user-attachments/assets/06af2e9f-1a9b-44b9-bf55-a4632cc08ef5)
-![Screenshot 2024-08-01 225221](https://github.com/user-attachments/assets/89523ac4-9e18-4ad1-90c2-e6aa979be769)
-
-### 🏢 Sponsor
-https://runpod.io
+- [camenduru](https://github.com/camenduru)
+- [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
+- [FLUX](https://github.com/black-forest-labs/flux)
