@@ -5,7 +5,8 @@ FROM runpod/base:0.6.1-cuda12.2.0
 RUN apt-get update && apt-get install -y ffmpeg aria2 git unzip
 
 # Install Python dependencies
-RUN pip install --no-cache-dir opencv-python imageio imageio-ffmpeg ffmpeg-python av runpod \
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 \
+    opencv-python imageio imageio-ffmpeg ffmpeg-python av runpod \
     xformers==0.0.25 torchsde==0.2.6 einops==0.8.0 diffusers==0.28.0 transformers==4.41.2 accelerate==0.30.1
 
 # Clone the ComfyUI repository
