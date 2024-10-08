@@ -20,7 +20,7 @@ target "development" {
   args = {
     ENVIRONMENT = "development"
   }
-  tags = ["${DOCKERHUB_REPO}/${DOCKERHUB_IMG}:dev"]
+  tags = ["${DOCKERHUB_REPO}/${DOCKERHUB_IMG}:${RELEASE_VERSION}-dev"]
 }
 
 target "production" {
@@ -29,5 +29,5 @@ target "production" {
   args = {
     ENVIRONMENT = "production"
   }
-  tags = ["${DOCKERHUB_REPO}/${DOCKERHUB_IMG}:latest"]
+  tags = ["${DOCKERHUB_REPO}/${DOCKERHUB_IMG}:${RELEASE_VERSION}"]
 }
