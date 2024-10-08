@@ -1,10 +1,14 @@
-# Use RunPod's base image
 FROM runpod/base:0.6.1-cuda12.2.0
 
-# Only install absolutely necessary packages for your project
-RUN apt-get update && apt-get install -y ffmpeg aria2 git unzip
+# Environment variable to differentiate between development and production
+ARG ENVIRONMENT=development
+ENV ENVIRONMENT=${ENVIRONMENT}
 
-# Clone the ComfyUI repository
+# Install necessary system packages
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg aria2 git unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clone the ComfyUI repository 
 RUN git clone https://github.com/comfyanonymous/ComfyUI /content/ComfyUI
 
 # Download required model files
@@ -18,8 +22,21 @@ RUN mkdir -p /content/ComfyUI/models/unet && \
     mkdir -p /content/ComfyUI/models/loras && \
     aria2c --console-log-level=error -c -x 16 -s 16 -k 1M "https://civitai.com/api/download/models/896422?type=Model&format=SafeTensor" -d /content/ComfyUI/models/loras -o zanshou-kin-flux-ueno-manga-style.safetensors
 
-# Reset the working directory to the base image's root
-WORKDIR /
+# Copy requirements.txt earlier so it can be used for installing dependencies
+COPY builder/requirements.txt /requirements.txt
 
-# Keep the base image's entrypoint
-CMD ["/start.sh"]
+# Install Python dependencies if building for production
+RUN if [ "$ENVIRONMENT" = "production" ]; then \
+    python3.10 -m pip install --upgrade pip && \
+    python3.10 -m pip install --no-cache-dir -r /requirements.txt; \
+    fi
+
+# Copy all files from src to the root directory
+COPY ./src/ /
+
+# Final CMD based on environment
+CMD if [ "$ENVIRONMENT" = "development" ]; then \
+    /start.sh; \
+    else \
+    python3.10 -u /handler.py; \
+    fi

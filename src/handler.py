@@ -1,6 +1,4 @@
 import os
-import json
-import requests
 import runpod
 import random
 import time
@@ -13,11 +11,9 @@ import sys
 
 sys.path.append("/content/ComfyUI")
 
-import nodes
 from nodes import NODE_CLASS_MAPPINGS
 from comfy_extras import nodes_custom_sampler
 from comfy_extras import nodes_flux
-from comfy import model_management
 
 # Initialize Model Loaders
 DualCLIPLoader = NODE_CLASS_MAPPINGS["DualCLIPLoader"]()
@@ -64,17 +60,18 @@ def generate(input):
     width = values.get("width", 512)
     height = values.get("height", 512)
     seed = values.get("seed", 0)
-    steps = values.get("steps", 50)
-    guidance = values.get("guidance", 7.5)
+    steps = values.get("steps", 25)
+    guidance = values.get("guidance", 3.5)
     lora_strength_model = values.get("lora_strength_model", 0.8)
     lora_strength_clip = values.get("lora_strength_clip", 0.8)
-    sampler_name = values.get("sampler_name", "Euler")
-    scheduler = values.get("scheduler", "default")
+    sampler_name = values.get("sampler_name", "euler")
+    scheduler = values.get("scheduler", "simple")
     job_id = values.get("job_id", "test-job-123")
     lora_name = values.get("lora_name", "zanshou-kin-flux-ueno-manga-style.safetensors")
+    image_path = None
 
     # Path to the LoRA model based on lora_name
-    lora_file_path = f"models/loras/{lora_name}"
+    lora_file_path = f"/content/ComfyUI/models/loras/{lora_name}"
 
     # Validate if the specified LoRA model exists
     if not os.path.exists(lora_file_path):
@@ -95,9 +92,10 @@ def generate(input):
     print(f"Using seed: {seed}")
 
     try:
+
         # Load LoRA models from the specified file
         unet_lora, clip_lora = LoraLoader.load_lora(
-            unet, clip, lora_file_path, lora_strength_model, lora_strength_clip
+            unet, clip, lora_name, lora_strength_model, lora_strength_clip
         )
 
         # Encode the positive prompt
@@ -151,7 +149,7 @@ def generate(input):
 
     finally:
         # Clean up the generated image file
-        if os.path.exists(image_path):
+        if image_path is not None and os.path.exists(image_path):
             os.remove(image_path)
 
 
