@@ -3,6 +3,8 @@ name: Development
 on:
   workflow_dispatch:
   push:
+    branches-ignore:
+    - main
 
 jobs:
   dev:
@@ -30,16 +32,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Image to Docker Hub
-        uses: docker/build-push-action@v5
-        with:
-            push: true
-            tags: |
-              ${{ secrets.DOCKERHUB_REPO }}/${{ secrets.DOCKERHUB_IMG }}:latest
-            cache-from: type=local,src=/tmp/.buildx-cache
-            cache-to: type=local,dest=/tmp/.buildx-cache-new
-
-      - name: Move Cache
+      - name: Set environment variables
         run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          echo "DOCKERHUB_REPO=${{ secrets.DOCKERHUB_REPO }}" >> $GITHUB_ENV
+          echo "DOCKERHUB_IMG=${{ secrets.DOCKERHUB_IMG }}" >> $GITHUB_ENV
+          echo "HUGGINGFACE_ACCESS_TOKEN=${{ secrets.HUGGINGFACE_ACCESS_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Build and push the images to Docker Hub
+        uses: docker/bake-action@v2
+        with:
+          push: true
+          set: |
+            *.args.DOCKERHUB_REPO=${{ env.DOCKERHUB_REPO }}
+            *.args.DOCKERHUB_IMG=${{ env.DOCKERHUB_IMG }}
+            *.args.HUGGINGFACE_ACCESS_TOKEN=${{ env.HUGGINGFACE_ACCESS_TOKEN }}
